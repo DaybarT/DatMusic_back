@@ -1,0 +1,85 @@
+https://console.cloud.google.com/apis/credentials/wizard?api=drive.googleapis.com&previousPage=%2Fapis%2Fapi%2Fdrive.googleapis.com%2Fmetrics%3Fproject%3Dautenticacionen2pasos%26hl%3Des-419&hl=es-419&project=autenticacionen2pasos
+api drive para almacenamiento
+
+crear archivo :
+
+import com.google.api.client.googleapis.javanet.GoogleNetHttpTransport;
+import com.google.api.client.googleapis.json.GoogleJsonResponseException;
+import com.google.api.client.json.JsonFactory;
+import com.google.api.client.json.jackson2.JacksonFactory;
+import com.google.api.client.auth.oauth2.Credential;
+import com.google.api.client.extensions.java6.auth.oauth2.AuthorizationCodeInstalledApp;
+import com.google.api.client.extensions.jetty.auth.oauth2.LocalServerReceiver;
+import com.google.api.services.drive.Drive;
+import com.google.api.services.drive.DriveScopes;
+import com.google.api.services.drive.model.File;
+import com.google.api.services.drive.model.FileList;
+
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.security.GeneralSecurityException;
+import java.util.Collections;
+import java.util.List;
+
+public class DriveQuickstart {
+    private static final String APPLICATION_NAME = "Google Drive API Java Quickstart";
+    private static final JsonFactory JSON_FACTORY = JacksonFactory.getDefaultInstance();
+    private static final List<String> SCOPES = Collections.singletonList(DriveScopes.DRIVE_FILE);
+    private static final String CREDENTIALS_FILE_PATH = "path/to/credentials.json";
+
+    public static Credential getCredentials(final NetHttpTransport HTTP_TRANSPORT) throws IOException {
+        InputStream in = new FileInputStream(CREDENTIALS_FILE_PATH);
+        GoogleClientSecrets clientSecrets = GoogleClientSecrets.load(JSON_FACTORY, new InputStreamReader(in));
+        GoogleAuthorizationCodeFlow flow = new GoogleAuthorizationCodeFlow.Builder(
+                HTTP_TRANSPORT, JSON_FACTORY, clientSecrets, SCOPES)
+                .setDataStoreFactory(new FileDataStoreFactory(new java.io.File("tokens")))
+                .setAccessType("offline")
+                .build();
+        LocalServerReceiver receiver = new LocalServerReceiver.Builder().setPort(8888).build();
+        return new AuthorizationCodeInstalledApp(flow, receiver).authorize("user");
+    }
+
+    public static void main(String... args) throws IOException, GeneralSecurityException {
+        final NetHttpTransport HTTP_TRANSPORT = GoogleNetHttpTransport.newTrustedTransport();
+        Drive service = new Drive.Builder(HTTP_TRANSPORT, JSON_FACTORY, getCredentials(HTTP_TRANSPORT))
+                .setApplicationName(APPLICATION_NAME)
+                .build();
+
+        File fileMetadata = new File();
+        fileMetadata.setName("music.mp3");
+        java.io.File filePath = new java.io.File("path/to/your/music.mp3");
+        FileContent mediaContent = new FileContent("audio/mpeg", filePath);
+
+        try {
+            File file = service.files().create(fileMetadata, mediaContent)
+                    .setFields("id")
+                    .execute();
+            System.out.println("File ID: " + file.getId());
+        } catch (GoogleJsonResponseException e) {
+            System.err.println("Unable to upload file: " + e.getDetails());
+            throw e;
+        }
+    }
+}
+
+
+url publica:
+
+import com.google.api.services.drive.model.Permission;
+
+public static void makeFilePublic(Drive service, String fileId) throws IOException {
+    Permission permission = new Permission()
+            .setType("anyone")
+            .setRole("reader");
+    service.permissions().create(fileId, permission).execute();
+    System.out.println("File is now public: " + "https://drive.google.com/uc?id=" + fileId);
+}
+
+public static void main(String... args) throws IOException, GeneralSecurityException {
+    // (Código anterior de autenticar y subir archivos)
+    // Asegúrate de llamar a makeFilePublic después de subir el archivo
+    makeFilePublic(service, file.getId());
+}
+
+
