@@ -6,11 +6,11 @@ import org.springframework.stereotype.Repository;
 import com.example.music.Entity.Users;
 
 @Repository("UsersRepo")
-public interface UserRepository extends JpaRepository<Users, Long> {
+public interface UserRepository extends JpaRepository<Users, String> {
     // Métodos adicionales de consulta personalizados pueden ser definidos aquí
     Users findByEmail(String Email);
     Users findByUsername(String Username);
-    // boolean deleteUserByUsername(String Username);
+    boolean deleteUserByUsername(String Username);
 }
 
 //POR SI TIENES QUE HACER QUERYS PERSONALIZADAS
