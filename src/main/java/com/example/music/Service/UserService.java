@@ -1,4 +1,6 @@
 package com.example.music.Service;
+import java.util.UUID;
+
 import org.mindrot.jbcrypt.BCrypt;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -10,12 +12,8 @@ import com.example.music.Repository.UserRepository;
 @Service
 public class UserService {
 
-    private final UserRepository userRepository;
-
     @Autowired
-    public UserService(UserRepository userRepository) {
-        this.userRepository = userRepository;
-    }
+    private UserRepository userRepository;
 
     @Transactional
     public Users register(Users user) {
@@ -26,6 +24,8 @@ public class UserService {
         if (userRepository.findByUsername(user.getUsername()) != null){
             throw new IllegalArgumentException("Username no disponible");
         }
+        String id = UUID.randomUUID().toString();
+        user.setId(id);
         user.setPass(BCrypt.hashpw(user.getPass(),BCrypt.gensalt()));
 
         return userRepository.save(user);

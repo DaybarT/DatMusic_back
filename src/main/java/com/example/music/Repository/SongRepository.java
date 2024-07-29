@@ -7,6 +7,8 @@ import org.springframework.stereotype.Repository;
 
 import com.example.music.Entity.Songs;
 
+import jakarta.transaction.Transactional;
+
 
 @Repository("SongRepo")
 public interface SongRepository extends JpaRepository<Songs, String>{
@@ -14,10 +16,9 @@ public interface SongRepository extends JpaRepository<Songs, String>{
     Songs findSongsByType(String type);
     // List<Songs> findByAlbum(Albums albumName);
     // List<Songs> findByArtist(Artists nombre);
-    @Query(value="SELECT * FROM songs WHERE song_name = :song_name LIMIT 10", nativeQuery = true)
+    @Query(value="SELECT * FROM songs WHERE song_name LIKE :song_name LIMIT 10", nativeQuery = true)
     Songs findBySongName(@Param("song_name") String songName);
 
-    // @Transactional
-    // void deletesongById(String songId);
+   
 }
 

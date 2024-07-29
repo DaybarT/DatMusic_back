@@ -83,3 +83,29 @@ public static void main(String... args) throws IOException, GeneralSecurityExcep
 }
 
 
+IA transcripcion de canciones a letra?
+
+from google.cloud import speech_v1p1beta1 as speech
+import os
+
+def transcribe_audio(gcs_uri):
+    client = speech.SpeechClient()
+
+    audio = speech.RecognitionAudio(uri=gcs_uri)
+    config = speech.RecognitionConfig(
+        encoding=speech.RecognitionConfig.AudioEncoding.LINEAR16,
+        sample_rate_hertz=16000,
+        language_code="en-US",
+    )
+
+    response = client.recognize(config=config, audio=audio)
+
+    for result in response.results:
+        print("Transcript: {}".format(result.alternatives[0].transcript))
+
+# Establece la ruta del archivo de credenciales JSON
+os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "ruta/a/tu/archivo/credentials.json"
+
+# URI del archivo en Google Cloud Storage
+gcs_uri = "gs://tu_bucket/output_audio.wav"
+transcribe_audio(gcs_uri)

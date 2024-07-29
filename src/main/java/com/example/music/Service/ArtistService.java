@@ -18,12 +18,8 @@ public class ArtistService {
     @Autowired
     private LicenseRepository licenseRepository;
 
-    private final ArtistRepository artistRepository;
-
     @Autowired
-    public ArtistService(ArtistRepository artistRepository) {
-        this.artistRepository = artistRepository;
-    }
+    private ArtistRepository artistRepository;
 
     @Transactional
     public Artists register(Artists artist) {
