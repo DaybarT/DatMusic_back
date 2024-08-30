@@ -9,8 +9,6 @@ import javax.crypto.spec.SecretKeySpec;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import com.example.music.Entity.Users;
-
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -25,10 +23,10 @@ public class JwtService {
     private int jwtExpirationMs;
 
 
-    public String generateToken(Users user){
+    public String generateToken(String username, String email){
         return Jwts.builder()
-                    .setSubject(user.getUsername())
-                    .claim("Email", user.getEmail()) 
+                    .setSubject(username)
+                    .claim("Email", email) 
                     .setIssuedAt(new Date()) // Fecha de emisión del token (ahora)
                     .setExpiration(new Date(System.currentTimeMillis() + jwtExpirationMs)) // Fecha de expiración del token
                     .signWith(getSigningKey(), SignatureAlgorithm.HS512) // Firma del token con HMAC SHA-512 y la clave secreta

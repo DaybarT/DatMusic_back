@@ -24,7 +24,7 @@ public class AuthController {
     @PostMapping("/login")
     public ResponseEntity<Object> loginUser(@RequestBody String username, String pass, String license) {
         try {
-            String token = authService.login(username,pass);
+            String token = authService.login(username,pass, license);
             if (token != null) {
                 return ResponseEntity.ok(token);
             } else {
