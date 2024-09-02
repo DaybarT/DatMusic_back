@@ -21,10 +21,10 @@ public class UserService {
         // Lógica de negocio para registrar un nuevo usuario
         try {
             if (userRepository.findByEmail(user.getEmail()) != null) {
-                throw new IllegalArgumentException("El email ya está registrado");
+                throw new Exception("El email ya está registrado");
             }
             if (userRepository.findByUsername(user.getUsername()) != null) {
-                throw new IllegalArgumentException("Username no disponible");
+                throw new Exception("Username no disponible");
             }
         } catch (Exception e) {
             throw new RuntimeException("Error al crear el usuario: " + e.getMessage());
@@ -41,7 +41,7 @@ public class UserService {
         try {
             Users updateData = userRepository.findByUsername(user.getUsername());
             if (updateData == null) {
-                throw new IllegalArgumentException("Usuario no encontrado para actualizar");
+                throw new Exception("Usuario no encontrado para actualizar");
             }
 
             updateData.setEmail(user.getEmail());
@@ -63,7 +63,7 @@ public class UserService {
             // metodo y que updatee la contraseña enviando un objeto a aqui.
             Users updatePass = userRepository.findByEmail(user.getEmail());
             if (updatePass == null) {
-                throw new RuntimeException("Usuario no encontrado para cambiar la contraseña");
+                throw new Exception("Usuario no encontrado para cambiar la contraseña");
             }
 
             user.setPass(BCrypt.hashpw(user.getPass(), BCrypt.gensalt()));

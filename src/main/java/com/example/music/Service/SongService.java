@@ -11,7 +11,6 @@ import com.example.music.Repository.ArtistRepository;
 import com.example.music.Repository.SongRepository;
 
 import jakarta.transaction.Transactional;
-
 @Service
 public class SongService {
 
@@ -23,34 +22,34 @@ public class SongService {
 
     @Transactional
     public Songs uploadSong(Songs song) {
-        String id = UUID.randomUUID().toString();
-
-        try {
-            System.out.println(id);
-
-            Artists artist = artistRepository.findByartistId("c89f89e9-5f1d-4ab9-9e35-c2de6740102c"); // HeaderParam
-
-            Songs newSong = new Songs(
-                    id,
-                    song.getSongName(),
-                    song.getType(),
-                    song.getPhoto(),
-                    null,
-                    artist);
-            // song.setArtist(artist.getArtistId()));
-
-            return songRepository.save(newSong);
-
-        } catch (Exception e) {
-            // Manejar la excepción adecuadamente o lanzarla si es necesario
-            throw new RuntimeException("Error al subir la canción: " + e.getMessage());
-        }
-
+    String id = UUID.randomUUID().toString();
+    
+    try {
+        System.out.println(id);
+        
+        Artists artist = artistRepository.findByartistId("c89f89e9-5f1d-4ab9-9e35-c2de6740102c"); //HeaderParam
+        
+        Songs newSong = new Songs(
+                id,
+                song.getSongName(),
+                song.getType(),
+                song.getPhoto(),
+                null,
+                artist);
+                // song.setArtist(artist.getArtistId()));
+                
+        return songRepository.save(newSong);
+        
+    } catch (Exception e) {
+        // Manejar la excepción adecuadamente o lanzarla si es necesario
+        throw new RuntimeException("Error al subir la canción: " + e.getMessage());
     }
-
-    public Songs findSongs(String name) {
-        Songs findSong = songRepository.findBySongName(name);
+    
+}
+    public Songs findSongs(String name){
+        Songs findSong = songRepository.findBySongName(name);       
         return findSong;
     }
-
+    
+    
 }

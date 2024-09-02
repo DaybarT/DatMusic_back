@@ -22,11 +22,11 @@ public class JwtService {
     @Value("${jwt.expiration}")
     private int jwtExpirationMs;
 
-
-    public String generateToken(String username, String email){
+    public String generateToken(String username, String email, String license){
         return Jwts.builder()
                     .setSubject(username)
-                    .claim("Email", email) 
+                    .claim("Email", email)
+                    .claim("license",license)
                     .setIssuedAt(new Date()) // Fecha de emisión del token (ahora)
                     .setExpiration(new Date(System.currentTimeMillis() + jwtExpirationMs)) // Fecha de expiración del token
                     .signWith(getSigningKey(), SignatureAlgorithm.HS512) // Firma del token con HMAC SHA-512 y la clave secreta

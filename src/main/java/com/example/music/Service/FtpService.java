@@ -30,7 +30,7 @@ public class FtpService {
     private String pass;
 
     // Conectar al servidor FTP
-    public boolean connectToFTP() {
+    public boolean connectToFTP() throws IOException {
       
         boolean success = false;
         try {
@@ -46,14 +46,14 @@ public class FtpService {
             success = true;
 
         } catch (IOException e) {
-            System.err.println("Error conectando al servidor FTP: " + e.getMessage());
+            throw new IOException("Error conectando al servidor FTP: " + e.getMessage());
         }
 
         return success;
     }
 
     // Subir un archivo
-    public void uploadFile(String id,MultipartFile localFilePath){
+    public String uploadFile(String id,MultipartFile localFilePath) throws IOException{
         String fileName = "";
         try {
             
@@ -62,63 +62,67 @@ public class FtpService {
             
             String data = localFilePath.getContentType();
             System.out.println(data);
-            if ("audio/mpeg".equals(data)){
-
-                fileName = id + ".mp3";
-
-                ftpClient.changeWorkingDirectory("/audio");
-            }
-            else if ("image/jpeg".equals(data)) {
-                fileName = id + ".jpeg";
-
-                ftpClient.changeWorkingDirectory("/image");
-            }
-            else{
+            if (null == data){
                 throw new IOException("Tipo de dato no soportado: " + data);
+            }
+            else switch (data) {
+                case "audio/mpeg" -> {
+                    fileName = id + ".mp3";
+                    ftpClient.changeWorkingDirectory("/audio");
+                }
+                case "image/jpeg" -> {
+                    fileName = id + ".jpeg";
+                    ftpClient.changeWorkingDirectory("/image");
+                }
+                default -> throw new IOException("Tipo de dato no soportado: " + data);
             }
 
             boolean done = ftpClient.storeFile(fileName, inputStream);
 
             if (done) {
-                System.out.println("El archivo se ha subido con éxito.");
                 inputStream.close();
+                return "El archivo se ha subido con éxito.";
+                
 
             } else {
-                System.out.println("Error al subir el archivo.");
+                return"Error al subir el archivo.";
             }
         }catch (IOException e) {
-            System.err.println("Error al subir el archivo: " + e.getMessage());
+            throw new IOException("Error al subir el archivo: " + e.getMessage());
         }
     }
 
     // Descargar un archivo
-    public void downloadFile(String remoteFilePath, String localFilePath) throws IOException {
+    public void downloadFile(String remoteFilePath, String localFilePath) throws IOException{
         try (OutputStream outputStream = new FileOutputStream(localFilePath)) {
             boolean success = ftpClient.retrieveFile(remoteFilePath, outputStream);
             if (success) {
                 System.out.println("El archivo se ha descargado con éxito.");
             } else {
-                System.out.println("Error al descargar el archivo.");
+                throw new IOException("Error al descargar el archivo.");
             }
+        } catch (IOException e) {
+            throw new IOException("Ocurrió un error al descargar el archivo: " + e.getMessage());
         }
     }
+    
 
     // Cerrar la conexión FTP
-    public void disconnect() {
+    public void disconnect() throws IOException {
         if (ftpClient.isConnected()) {
             try {
                 ftpClient.logout();
                 ftpClient.disconnect();
                 System.out.println("Desconectado del servidor FTP");
                 System.out.println(ftpClient);
-            } catch (IOException ex) {
-                ex.printStackTrace();
+            } catch (IOException e) {
+                throw new IOException("Error al desconectar" + e.getMessage());
             }
         }
     }
 
 
-    public void deleteSong(String id){
+    public void deleteSong(String id) throws IOException{
         try {
              // Cambiar al directorio /audio
              if (ftpClient.changeWorkingDirectory("/audio")) {
@@ -127,8 +131,8 @@ public class FtpService {
             }
 
                
-        } catch (Exception e) {
-            System.err.println("Error fatal al eliminar: " + e.getMessage());
+        } catch (IOException e) {
+            throw new IOException("Error fatal al eliminar:" + e.getMessage());
 
         }
     }

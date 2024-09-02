@@ -7,8 +7,6 @@ import org.springframework.stereotype.Repository;
 
 import com.example.music.Entity.Songs;
 
-import jakarta.transaction.Transactional;
-
 
 @Repository("SongRepo")
 public interface SongRepository extends JpaRepository<Songs, String>{

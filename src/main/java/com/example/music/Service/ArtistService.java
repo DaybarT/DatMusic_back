@@ -1,6 +1,5 @@
 package com.example.music.Service;
 
-import java.io.IOException;
 import java.util.UUID;
 
 import org.mindrot.jbcrypt.BCrypt;
@@ -29,10 +28,10 @@ public class ArtistService {
         try {
 
             if (artistRepository.findByEmail(artist.getEmail()) != null) {
-                throw new IOException("El email ya está registrado");
+                throw new Exception("El email ya está registrado");
             }
             if (artistRepository.findByUsername(artist.getUsername()) != null) {
-                throw new IOException("Username no disponible");
+                throw new Exception("Username no disponible");
             }
             artist.setPass(BCrypt.hashpw(artist.getPass(), BCrypt.gensalt()));
 
@@ -51,10 +50,10 @@ public class ArtistService {
                 // Save the artist entity
                 return artistRepository.save(artist);
             } else {
-                throw new IOException("No hay licencias disponibles para asignar");
+                throw new Exception("No hay licencias disponibles para asignar");
             }
         } catch (Exception e) {
-            throw new RuntimeException("Error al registrar el Artista"+ e.getMessage());
+            throw new RuntimeException("Error al registrar el Artista" + e.getMessage());
         }
     }
 
@@ -63,13 +62,13 @@ public class ArtistService {
         try {
             Artists updateData = artistRepository.findByUsername(artist.getUsername());
             if (updateData == null) {
-                throw new IllegalArgumentException("Artista no encontrado para actualizar");
+                throw new Exception("Artista no encontrado para actualizar");
+            } else {
+                updateData.setEmail(artist.getEmail());
+
+                // Guardar los cambios en el repositorio
+                return artistRepository.save(updateData);
             }
-
-            updateData.setEmail(artist.getEmail());
-
-            // Guardar los cambios en el repositorio
-            return artistRepository.save(updateData);
 
         } catch (Exception e) {
             throw new RuntimeException("Error al actualizar el Artista: " + e.getMessage());
@@ -83,7 +82,7 @@ public class ArtistService {
             // metodo y que updatee la contraseña enviando un objeto a aqui.
             Artists updatePass = artistRepository.findByEmail(artist.getEmail());
             if (updatePass == null) {
-                throw new RuntimeException("Usuario no encontrado para cambiar la contraseña");
+                throw new Exception("Usuario no encontrado para cambiar la contraseña");
             }
 
             artist.setPass(BCrypt.hashpw(artist.getPass(), BCrypt.gensalt()));

@@ -8,5 +8,6 @@ import com.example.music.Entity.Albums;
 public interface AlbumRepository  extends JpaRepository<Albums, String>{
     Albums findByType(String type);
     // List<Albums> findByArtist(Artists artist);
+    Albums findByName(String name);
 }
 

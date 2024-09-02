@@ -21,24 +21,26 @@ public class AuthService {
     public String login(String username, String password, String license) {
 
         try {
-            String token = null;
-
             if (license == null) {
                 Users user = userRepository.findByUsername(username);
                 // Verificar si se encontró un usuario y si la contraseña coincide
                 if (user != null && passwordMatches(password, user.getPass())) {
-                    token = new JwtService().generateToken(user.getUsername(), user.getEmail());
-                } 
+                    String token = new JwtService().generateToken(user.getUsername(), user.getEmail(),null);
+                    return token;
+                } else {
+                    throw new Exception("Username o contraseña erróneos");
+                }
             } else {
                 Artists artists = artistRepository.findByUsername(username);
                 if (artists != null && passwordMatches(password, artists.getPass())) {
-                    token = new JwtService().generateToken(artists.getUsername(), artists.getEmail());
+                    String token = new JwtService().generateToken(artists.getUsername(), artists.getEmail(),license);
+                    return token;
+                } else {
+                    throw new Exception("Username o contraseña erróneos");
                 }
             }
 
-            return token != null ? token : "Usuario o contraseña erróneos";
-
-        } catch (RuntimeException e) {
+        } catch (Exception e) {
             return "Error al conectar: " + e.getMessage();
         }
     }
@@ -59,11 +61,11 @@ public class AuthService {
             if (isTokenExpired) {
                 return "Desconectando";
             } else {
-                throw new RuntimeException("el token ya expiró");
+                throw new Exception("el token ya expiró");
             }
-        } catch (RuntimeException e) {
-            System.out.println("Error al desconectar: " + e.getMessage());
-            return "Error al desconectar";
+        } catch (Exception e) {
+            return "Error al desconectar" + e.getMessage();
+            
         }
     }
 

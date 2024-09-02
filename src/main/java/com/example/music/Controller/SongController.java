@@ -1,5 +1,7 @@
 package com.example.music.Controller;
 
+import java.io.IOException;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -28,7 +30,7 @@ public class SongController {
 
 
     @PostMapping("/uploadSong")
-    public Songs connectFTP(@RequestParam("file") MultipartFile localFilePath,@ModelAttribute Songs song) {
+    public Songs connectFTP(@RequestParam("file") MultipartFile localFilePath,@ModelAttribute Songs song) throws IOException {
         boolean prueba = ftpService.connectToFTP();
         if (prueba == true){
             Songs data = songservice.uploadSong(song);
@@ -43,7 +45,7 @@ public class SongController {
     }
     // 7edc1367-04ab-4a87-a7d2-40c7597e7b51
     @DeleteMapping("/deleteSong")
-    public String deleteSong(@RequestBody String id){ //cuando tengas el frontend, ajustalo para pasarle el objeto entero 
+    public String deleteSong(@RequestBody String id) throws IOException{ //cuando tengas el frontend, ajustalo para pasarle el objeto entero 
         boolean prueba = ftpService.connectToFTP();
         if (prueba == true){
             //no hace falta buscarla, este metodo estara disponible solo cuando ya hayas encontrado la cancion

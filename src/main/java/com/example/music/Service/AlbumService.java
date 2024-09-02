@@ -23,17 +23,26 @@ public class AlbumService {
         String id = UUID.randomUUID().toString();
 
         try {
-            System.out.println(id);
+            System.out.println("Creando el album con nombre: " + album.getName() + " con el id: " + album.getId());
             Artists artist = artistRepository.findByartistId("c89f89e9-5f1d-4ab9-9e35-c2de6740102c"); // HeaderParam
 
-            Albums newAlbum = new Albums(id, album.getNombre(), album.getPhoto(), album.getType(), artist);
+            if (artist == null) {
+                throw new Exception("Artista no existente");
+            } else {
+                Albums newAlbum = new Albums(id, album.getName(), album.getPhoto(), album.getType(), artist);
 
-            return albumRepository.save(newAlbum);
+                return albumRepository.save(newAlbum);
+            }
 
         } catch (Exception e) {
             // Manejar la excepción adecuadamente o lanzarla si es necesario
             throw new RuntimeException("Error crear el album: " + e.getMessage());
         }
 
+    }
+
+    public Albums findAlbums(String name) {
+        Albums findAlbums = albumRepository.findByName(name);
+        return findAlbums;
     }
 }
